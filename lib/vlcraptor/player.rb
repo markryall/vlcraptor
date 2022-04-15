@@ -33,6 +33,10 @@ module Vlcraptor
       @vlc.playing?
     end
 
+    def time
+      @vlc.time
+    end
+
     def remaining
       @vlc.length - @vlc.time
     end

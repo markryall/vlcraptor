@@ -11,6 +11,17 @@ module Vlcraptor
       @console = Vlcraptor::Console.new
     end
 
+    def track_suspended
+      @preferences[:started] = nil
+    end
+
+    def track_resumed(track, elapsed)
+      return unless track
+
+      track[:start_time] = Time.now - elapsed
+      @preferences[:started] = track[:start_time].to_i
+    end
+
     def track_progress(track, remaining)
       return unless track
 
@@ -31,6 +42,8 @@ module Vlcraptor
     def track_started(track)
       return unless track
 
+      @preferences[:started] = Time.now.to_i
+      track[:start_time] = Time.now
       scrobbler&.now_playing(track[:artist], track[:title])
       terminal_notify(
         message: "#{track[:title]} by #{track[:artist]}",

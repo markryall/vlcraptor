@@ -13,6 +13,8 @@ when "autoplay"
   Vlcraptor.autoplay(ARGV.shift)
 when "crossfade"
   Vlcraptor.crossfade(ARGV.shift)
+when "list"
+  Vlcraptor.list
 when "pause"
   Vlcraptor.pause
 when "play"

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rainbow"
 require_relative "vlcraptor/player"
 require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
@@ -12,6 +13,24 @@ module Vlcraptor
 
   def self.crossfade(value)
     Vlcraptor::Preferences.new[:crossfade] = value == "on"
+  end
+
+  def self.list
+    started = Vlcraptor::Preferences.new[:started]
+    offset = 0
+    Vlcraptor::Queue.each do |track|
+      array = []
+      array << Time.at(started + offset).strftime("%I:%M:%S") if started
+      array += [Rainbow(track[:title]).green, "by", Rainbow(track[:artist]).yellow]
+      array += ["from", Rainbow(track[:album]).cyan] if (track[:album] || "").length.positive?
+      if track[:length]
+        mins = track[:length] / 60
+        secs = track[:length] % 60
+        array << "(#{mins} minutes and #{secs} seconds)"
+      end
+      puts array.join(" ")
+      offset += track[:length]
+    end
   end
 
   def self.pause
@@ -40,6 +59,7 @@ module Vlcraptor
       if preferences.pause?
         player.pause
         suspended = true
+        notifiers.track_suspended
 
         next
       end
@@ -47,6 +67,7 @@ module Vlcraptor
       if preferences.stop?
         player.stop
         suspended = true
+        notifiers.track_suspended
 
         next
       end
@@ -54,6 +75,7 @@ module Vlcraptor
       if preferences.play?
         player.play
         suspended = false
+        notifiers.track_resumed(track, player.time)
 
         next
       end
@@ -64,7 +86,6 @@ module Vlcraptor
         if preferences.skip?
           track = queue.next
           if track
-            track[:start_time] = Time.now
             notifiers.track_started(track)
             player.crossfade(track[:path])
           else
@@ -77,7 +98,6 @@ module Vlcraptor
           notifiers.track_finished(track)
           track = queue.next
           if track
-            track[:start_time] = Time.now
             notifiers.track_started(track)
             player.crossfade(track[:path])
           end
@@ -94,7 +114,6 @@ module Vlcraptor
       track = queue.next
       next unless track
 
-      track[:start_time] = Time.now
       notifiers.track_started(track)
       player.play(track[:path])
     end
