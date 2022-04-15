@@ -3,7 +3,7 @@
 require_relative "vlcraptor/player"
 require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
-require_relative "vlcraptor/scrobbler"
+require_relative "vlcraptor/notifiers"
 
 module Vlcraptor
   def self.autoplay(value)
@@ -18,38 +18,48 @@ module Vlcraptor
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
     preferences = Vlcraptor::Preferences.new
-    scrobbler = Vlcraptor::Scrobbler.load if preferences.scrobble?
+    notifiers = Vlcraptor::Notifiers.new(preferences)
     track = nil
-    start_time = Time.now.to_i
 
     loop do
       sleep 0.2
 
       if player.playing?
-        skipping = preferences.skip?
-        track = nil if skipping
-        if skipping || (preferences.crossfade? && player.remaining < 5)
-          scrobbler&.scrobble(track[:artist], track[:title], timestamp: start_time) if track
+        if preferences.skip?
           track = queue.next
           if track
-            start_time = Time.now.to_i
-            scrobbler&.now_playing(track[:artist], track[:title])
+            track[:start_time] = Time.now
+            notifiers.track_started(track)
+            player.crossfade(track[:path])
+          else
+            player.fadeout
+          end
+          next
+        end
+
+        if preferences.crossfade? && player.remaining < 5
+          notifiers.track_finished(track)
+          track = queue.next
+          if track
+            track[:start_time] = Time.now
+            notifiers.track_started(track)
             player.crossfade(track[:path])
           end
         end
 
+        notifiers.track_playing(track)
         next
       end
 
       next unless preferences.continue?
 
-      scrobbler&.scrobble(track[:artist], track[:title], timestamp: start_time) if track
+      notifiers.track_finished(track)
       track = queue.next
       next unless track
 
-      start_time = Time.now.to_i
-      scrobbler&.now_playing(track[:artist], track[:title])
-      player.crossfade(track[:path])
+      track[:start_time] = Time.now
+      notifiers.track_started(track)
+      player.play(track[:path])
     end
   rescue Interrupt
     player.cleanup
