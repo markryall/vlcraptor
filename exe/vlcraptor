@@ -9,10 +9,14 @@ require "vlcraptor"
 command = ARGV.shift
 
 case command
-when "skip"
-  Vlcraptor.skip
+when "autoplay"
+  Vlcraptor.autoplay(ARGV.shift)
+when "crossfade"
+  Vlcraptor.crossfade(ARGV.shift)
 when "play"
   Vlcraptor.player
+when "skip"
+  Vlcraptor.skip
 else
   puts "unknown command #{command}"
 end

@@ -5,8 +5,12 @@ require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
 
 module Vlcraptor
-  def self.skip
-    Vlcraptor::Preferences.new[:skip] = true
+  def self.autoplay(value)
+    Vlcraptor::Preferences.new[:autoplay] = value == "on"
+  end
+
+  def self.crossfade(value)
+    Vlcraptor::Preferences.new[:crossfade] = value == "on"
   end
 
   def self.player
@@ -34,5 +38,9 @@ module Vlcraptor
   rescue Interrupt
     player.cleanup
     puts "Exiting"
+  end
+
+  def self.skip
+    Vlcraptor::Preferences.new[:skip] = true
   end
 end
