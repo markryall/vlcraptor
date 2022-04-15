@@ -14,7 +14,7 @@ module Vlcraptor
       sleep 0.2
 
       if player.playing?
-        if preferences.crossfade? && player.remaining < 5
+        if preferences.skip? || (preferences.crossfade? && player.remaining < 5)
           track = queue.next
           player.crossfade(track[:path]) if track
         end

@@ -48,6 +48,7 @@ module Vlcraptor
         sleep 0.5
       end
 
+      @vlc.stop
       @vlc, @vlc_other = @vlc_other, @vlc
     end
 

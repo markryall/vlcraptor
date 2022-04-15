@@ -18,6 +18,12 @@ module Vlcraptor
       self[:autoplay] && self[:crossfade]
     end
 
+    def skip?
+      result = self[:skip]
+      self[:skip] = false if result
+      result
+    end
+
     def [](key)
       load_preferences[key]
     end
