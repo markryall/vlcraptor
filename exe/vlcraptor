@@ -13,12 +13,18 @@ when "autoplay"
   Vlcraptor.autoplay(ARGV.shift)
 when "crossfade"
   Vlcraptor.crossfade(ARGV.shift)
+when "pause"
+  Vlcraptor.pause
 when "play"
+  Vlcraptor.play
+when "player"
   Vlcraptor.player
 when "skip"
   Vlcraptor.skip
 when "scrobble"
   Vlcraptor.scrobble(ARGV.shift)
+when "stop"
+  Vlcraptor.stop
 else
   puts "unknown command #{command}"
 end

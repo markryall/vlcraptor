@@ -11,13 +11,9 @@ module Vlcraptor
       @console = Vlcraptor::Console.new
     end
 
-    def track_playing(track)
+    def track_progress(track, remaining)
       return unless track
 
-      length = track[:length]
-      start = track[:start_time]
-      finish = start + length
-      remaining = (finish - Time.now).to_i
       rem = if remaining > 60
               "#{remaining / 60} minutes and #{remaining % 60} seconds remaining"
             else
@@ -25,7 +21,8 @@ module Vlcraptor
             end
       @console.change(
         [
-          "    ",
+          "        ",
+          display_time(Time.now + remaining),
           remaining < 20 ? Rainbow(rem).tomato : rem,
         ].join(" ")
       )

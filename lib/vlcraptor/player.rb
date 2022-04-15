@@ -62,8 +62,16 @@ module Vlcraptor
       @vlc, @vlc_other = @vlc_other, @vlc
     end
 
-    def play(path)
+    def play(path = nil)
       @vlc.play(path)
+    end
+
+    def pause
+      @vlc.pause
+    end
+
+    def stop
+      @vlc.stop
     end
 
     def cleanup

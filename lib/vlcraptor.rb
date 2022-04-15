@@ -14,15 +14,51 @@ module Vlcraptor
     Vlcraptor::Preferences.new[:crossfade] = value == "on"
   end
 
+  def self.pause
+    Vlcraptor::Preferences.new[:pause] = true
+  end
+
+  def self.play
+    Vlcraptor::Preferences.new[:play] = true
+  end
+
+  def self.stop
+    Vlcraptor::Preferences.new[:stop] = true
+  end
+
   def self.player
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
     preferences = Vlcraptor::Preferences.new
     notifiers = Vlcraptor::Notifiers.new(preferences)
     track = nil
+    suspended = false
 
     loop do
       sleep 0.2
+
+      if preferences.pause?
+        player.pause
+        suspended = true
+
+        next
+      end
+
+      if preferences.stop?
+        player.stop
+        suspended = true
+
+        next
+      end
+
+      if preferences.play?
+        player.play
+        suspended = false
+
+        next
+      end
+
+      next if suspended
 
       if player.playing?
         if preferences.skip?
@@ -47,7 +83,8 @@ module Vlcraptor
           end
         end
 
-        notifiers.track_playing(track)
+        notifiers.track_progress(track, player.remaining)
+
         next
       end
 

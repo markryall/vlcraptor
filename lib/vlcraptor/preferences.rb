@@ -22,10 +22,20 @@ module Vlcraptor
       self[:scrobble]
     end
 
+    def pause?
+      reset(:pause)
+    end
+
+    def stop?
+      reset(:stop)
+    end
+
+    def play?
+      reset(:play)
+    end
+
     def skip?
-      result = self[:skip]
-      self[:skip] = false if result
-      result
+      reset(:skip)
     end
 
     def [](key)
@@ -46,6 +56,12 @@ module Vlcraptor
 
     def load_preferences
       YAML.load_file(@path)
+    end
+
+    def reset(key)
+      result = self[key]
+      self[key] = false if result
+      result
     end
   end
 end
