@@ -118,6 +118,7 @@ module Vlcraptor
       player.play(track[:path])
     end
   rescue Interrupt
+    notifiers.track_suspended
     player.cleanup
     puts "Exiting"
   end
