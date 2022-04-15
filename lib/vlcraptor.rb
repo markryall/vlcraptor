@@ -5,6 +5,10 @@ require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
 
 module Vlcraptor
+  def self.skip
+    Vlcraptor::Preferences.new[:skip] = true
+  end
+
   def self.player
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
