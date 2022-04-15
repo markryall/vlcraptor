@@ -25,7 +25,7 @@ module Vlcraptor
       @vlc = VLC::Client.new(vlc_host, vlc_port_one)
       @vlc.connect
 
-      @vlc_other = VLC::Client.new(vlc_host, vlc_port_one)
+      @vlc_other = VLC::Client.new(vlc_host, vlc_port_two)
       @vlc_other.connect
     end
 
@@ -33,12 +33,8 @@ module Vlcraptor
       @vlc.playing?
     end
 
-    def length
-      @vlc.length
-    end
-
-    def time
-      @vlc.time
+    def remaining
+      @vlc.length - @vlc.time
     end
 
     def crossfade(path)
