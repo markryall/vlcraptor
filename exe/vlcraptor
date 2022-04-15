@@ -17,6 +17,8 @@ when "play"
   Vlcraptor.player
 when "skip"
   Vlcraptor.skip
+when "scrobble"
+  Vlcraptor.scrobble(ARGV.shift)
 else
   puts "unknown command #{command}"
 end

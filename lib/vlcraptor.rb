@@ -3,6 +3,7 @@
 require_relative "vlcraptor/player"
 require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
+require_relative "vlcraptor/scrobbler"
 
 module Vlcraptor
   def self.autoplay(value)
@@ -17,14 +18,24 @@ module Vlcraptor
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
     preferences = Vlcraptor::Preferences.new
+    scrobbler = Vlcraptor::Scrobbler.load if preferences.scrobble?
+    track = nil
+    start_time = Time.now.to_i
 
     loop do
       sleep 0.2
 
       if player.playing?
-        if preferences.skip? || (preferences.crossfade? && player.remaining < 5)
+        skipping = preferences.skip?
+        track = nil if skipping
+        if skipping || (preferences.crossfade? && player.remaining < 5)
+          scrobbler&.scrobble(track[:artist], track[:title], timestamp: start_time) if track
           track = queue.next
-          player.crossfade(track[:path]) if track
+          if track
+            start_time = Time.now.to_i
+            scrobbler&.now_playing(track[:artist], track[:title])
+            player.crossfade(track[:path])
+          end
         end
 
         next
@@ -32,12 +43,21 @@ module Vlcraptor
 
       next unless preferences.continue?
 
+      scrobbler&.scrobble(track[:artist], track[:title], timestamp: start_time) if track
       track = queue.next
-      player.play track[:path] if track
+      next unless track
+
+      start_time = Time.now.to_i
+      scrobbler&.now_playing(track[:artist], track[:title])
+      player.crossfade(track[:path])
     end
   rescue Interrupt
     player.cleanup
     puts "Exiting"
+  end
+
+  def self.scrobble(value)
+    Vlcraptor::Preferences.new[:scrobble] = value == "on"
   end
 
   def self.skip

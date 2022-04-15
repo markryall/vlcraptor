@@ -18,6 +18,10 @@ module Vlcraptor
       self[:autoplay] && self[:crossfade]
     end
 
+    def scrobble?
+      self[:scrobble]
+    end
+
     def skip?
       result = self[:skip]
       self[:skip] = false if result
