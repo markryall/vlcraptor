@@ -49,7 +49,7 @@ module Vlcraptor
         message: "#{track[:title]} by #{track[:artist]}",
         title: "Now Playing",
       )
-      @console.write(
+      @console.replace(
         [
           display_time(Time.now),
           display_time(Time.now + track[:length]),
