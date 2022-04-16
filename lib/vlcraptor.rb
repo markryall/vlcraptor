@@ -41,10 +41,6 @@ module Vlcraptor
     Vlcraptor::Preferences.new[:play] = true
   end
 
-  def self.stop
-    Vlcraptor::Preferences.new[:stop] = true
-  end
-
   def self.player
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
@@ -125,11 +121,27 @@ module Vlcraptor
     puts "Exiting"
   end
 
+  def self.queue(paths)
+    paths.each do |path|
+      if File.file?(path)
+        Vlcraptor::Queue.add(path)
+      else
+        Dir.glob("#{path}/**/*.*").each do |child_path|
+          Vlcraptor::Queue.add(child_path)
+        end
+      end
+    end
+  end
+
   def self.scrobble(value)
     Vlcraptor::Preferences.new[:scrobble] = value == "on"
   end
 
   def self.skip
     Vlcraptor::Preferences.new[:skip] = true
+  end
+
+  def self.stop
+    Vlcraptor::Preferences.new[:stop] = true
   end
 end
