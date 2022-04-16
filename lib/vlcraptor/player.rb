@@ -47,8 +47,17 @@ module Vlcraptor
         @vlc.volume = 256 - diff
         sleep 0.5
       end
+    end
 
-      @vlc.stop
+    def fadein
+      @vlc.volume = 0
+      @vlc.play
+
+      (0..10).each do |index|
+        diff = (256 * index) / 10
+        @vlc.volume = diff
+        sleep 0.5
+      end
     end
 
     def crossfade(path)

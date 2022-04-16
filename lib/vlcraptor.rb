@@ -57,6 +57,7 @@ module Vlcraptor
       sleep 0.2
 
       if preferences.pause?
+        player.fadeout
         player.pause
         suspended = true
         notifiers.track_suspended
@@ -65,6 +66,7 @@ module Vlcraptor
       end
 
       if preferences.stop?
+        player.fadeout
         player.stop
         suspended = true
         notifiers.track_suspended
@@ -73,7 +75,7 @@ module Vlcraptor
       end
 
       if preferences.play?
-        player.play
+        player.fadein
         suspended = false
         notifiers.track_resumed(track, player.time)
 
