@@ -1,28 +1,59 @@
 # Vlcraptor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/vlcraptor`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is a queueing daemon for VLC - kind of like `mpd` but nowhere near as flexible or useful.
 
-TODO: Delete this and the text above, and describe your gem
+The player daemon starts two instances of VLC and then uses those to play any tracks placed in the queue.
+
+Why two VLC instances? VLC doesn't support cross fading between tracks so this crossfades by starting the
+other VLC instance playing the next track and adjusting volume between both.
+
+At the moment, only mac os is supported - minor changes would be required to allow this to work on linux.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+You need to install VLC in the default location for mac os (`/Applications/VLC.app`).
 
-```ruby
-gem 'vlcraptor'
-```
+`brew install ffmpeg` is required by the `queue` command for extracting tags to place in the queue.
 
-And then execute:
+`brew install terminal-notifier` is optional depending if you want terminal notifications when new tracks start.
 
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install vlcraptor
+This gem can be installed with `gem install vlcraptor`.
 
 ## Usage
 
-TODO: Write usage instructions here
+First in one shell session, run `vlcraptor player`. This is the player daemon that controls two instances
+of VLC.
+
+Running `vlcraptor` without any parameters will list the available subcommands.
+
+### Adding tracks to the queue
+
+`vlcraptor queue folder_containing_audio_files audio_file.mp3` will place any number of audio files in the
+queue and the player should immediately start playing the first track.
+
+### Listing queue contents
+
+`vlcraptor list` will list currently queued tracks with an estimated start time if the player is currently
+running and playing a track.
+
+### Media controls
+
+`vlcraptor pause` will pause, `vlcraptor stop` will stop and `vlcraptor play` will resume.
+
+`vlcraptor skip` will fade out the current track and start the next one (unless the queue is empty). 
+
+### Optional features
+
+A number of features can be turned on/off while the player is running that will determine certain behaviour:
+
+`vlcraptor autoplay off` will cause the player to stop and politely wait after the current track has finished.
+`vlcraptor autoplay on` and tracks will start playing again.
+
+`vlcraptor crossfade off` will turn off crossfading so new tracks will start once the previous one is
+completely finished.
+
+`vlcraptor scrobble on` will turn on last.fm scrobbling - you will require your own application api key
+and secret to enable this.
 
 ## Development
 
@@ -32,4 +63,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/vlcraptor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/markryall/vlcraptor.
