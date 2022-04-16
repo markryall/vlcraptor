@@ -21,12 +21,21 @@ when "play"
   Vlcraptor.play
 when "player"
   Vlcraptor.player
-when "skip"
-  Vlcraptor.skip
 when "scrobble"
   Vlcraptor.scrobble(ARGV.shift)
+when "skip"
+  Vlcraptor.skip
 when "stop"
   Vlcraptor.stop
 else
-  puts "unknown command #{command}"
+  puts "Unknown command \"#{command}\":"
+  puts "  autoplay on/off: continue playing tracks or stop at the end of current track"
+  puts "  crossfade on/off: 5 second crossfade when changing tracks"
+  puts "  list: list current queue"
+  puts "  pause: pause current track (resume with play)"
+  puts "  play: resume after pause/stop"
+  puts "  player: start the player"
+  puts "  scrobble on/off: send track information to last.fm (requires an api key)"
+  puts "  skip: skip the current track"
+  puts "  stop: stop the player (resume with play)"
 end
