@@ -34,7 +34,7 @@ module Vlcraptor
         artist: tags.artist,
         album: tags.album,
         length: tags.time,
-        path: path,
+        path: File.expand_path(path),
       }
       `mkdir -p /tmp/queue`
       File.open("/tmp/queue/#{(Time.now.to_f * 1000).to_i}.yml", "w") { |f| f.puts meta.to_yaml }
