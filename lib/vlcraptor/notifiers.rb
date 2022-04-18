@@ -26,13 +26,13 @@ module Vlcraptor
       return unless track
 
       rem = if remaining > 60
-              "#{remaining / 60} minutes and #{remaining % 60} seconds remaining"
+              "(#{remaining / 60}m and #{remaining % 60}s remaining)"
             else
-              "#{remaining} seconds remaining"
+              "(#{remaining}s remaining)"
             end
       @console.change(
         [
-          "        ",
+          Rainbow(display_time(Time.now)).blueviolet,
           display_time(Time.now + remaining),
           remaining < 20 ? Rainbow(rem).tomato : rem,
         ].join(" ")
@@ -49,16 +49,21 @@ module Vlcraptor
         message: "#{track[:title]} by #{track[:artist]}",
         title: "Now Playing",
       )
+      len = if track[:length] > 60
+              "(#{track[:length] / 60}m and #{track[:length] % 60}s)"
+            else
+              "(#{track[:length]}s)"
+            end
+
       @console.replace(
         [
           display_time(Time.now),
-          display_time(Time.now + track[:length]),
           Rainbow(track[:title]).green,
           "by",
           Rainbow(track[:artist]).yellow,
           "from",
           Rainbow(track[:album]).cyan,
-          "(#{track[:length] / 60}:#{track[:length] % 60})",
+          len,
         ].join(" ")
       )
     end
