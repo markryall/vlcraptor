@@ -12,7 +12,10 @@ module Vlcraptor
     def next
       `rm -f #{@current_path}` if @current_path
       @current_path = Dir["/tmp/queue/*.yml"].min
-      YAML.load_file(@current_path) if @current_path
+      return unless @current_path
+
+      result = YAML.load_file(@current_path)
+      File.exist?(result[:path]) ? result : self.next
     end
 
     def self.each
