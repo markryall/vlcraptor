@@ -28,17 +28,19 @@ module Vlcraptor
     end
 
     def cleanup
+      @notifiers.track_suspended
+      @player.fadeout
       @player.cleanup
     end
 
     private
 
     def on_pause
+      @notifiers.track_suspended
       @player.fadeout
       @player.pause
       @suspended = true
       @status = "Now Paused"
-      @notifiers.track_suspended
       when_suspended
     end
 
@@ -54,7 +56,6 @@ module Vlcraptor
     def on_play
       @player.fadein
       @suspended = false
-      @status = ""
       @notifiers.track_resumed(@track, @player.time)
       when_playing_track(@player.remaining)
     end
@@ -72,6 +73,7 @@ module Vlcraptor
 
     def on_skip
       @track = @queue.next
+      @notifiers.track_suspended
       if @track
         @notifiers.track_started(@track)
         @player.crossfade(@track[:path])

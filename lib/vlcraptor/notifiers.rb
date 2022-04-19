@@ -53,6 +53,8 @@ module Vlcraptor
     end
 
     def track_finished(track)
+      @preferences[:started] = nil
+
       return unless track
 
       scrobbler&.scrobble(track[:artist], track[:title], timestamp: track[:start_time].to_i)
