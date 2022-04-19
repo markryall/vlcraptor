@@ -13,6 +13,10 @@ module Vlcraptor
     Vlcraptor::Preferences.new[:autoplay] = value == "on"
   end
 
+  def self.clear
+    Vlcraptor::Queue.clear
+  end
+
   def self.crossfade(value)
     Vlcraptor::Preferences.new[:crossfade] = value == "on"
   end

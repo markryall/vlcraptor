@@ -11,6 +11,8 @@ command = ARGV.shift
 case command
 when "autoplay"
   Vlcraptor.autoplay(ARGV.shift)
+when "clear"
+  Vlcraptor.clear
 when "crossfade"
   Vlcraptor.crossfade(ARGV.shift)
 when "history"
@@ -34,6 +36,7 @@ when "stop"
 else
   puts "Unknown command \"#{command}\":"
   puts "  autoplay on/off: continue playing tracks or stop at the end of current track"
+  puts "  clear: clear queue"
   puts "  crossfade on/off: 5 second crossfade when changing tracks"
   puts "  history: display play history"
   puts "  list: list current queue"

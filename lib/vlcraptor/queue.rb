@@ -18,6 +18,10 @@ module Vlcraptor
       File.exist?(result[:path]) ? result : self.next
     end
 
+    def self.clear
+      `rm -rf /tmp/queue`
+    end
+
     def self.length
       Dir["/tmp/queue/*.yml"].length
     end
