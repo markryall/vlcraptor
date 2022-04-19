@@ -21,10 +21,16 @@ This gem can be installed with `gem install vlcraptor`.
 
 ## Usage
 
-First in one shell session, run `vlcraptor player`. This is the player daemon that controls two instances
-of VLC.
-
 Running `vlcraptor` without any parameters will list the available subcommands.
+
+### Player
+
+Run `vlcraptor player` in a shell session.
+
+This is the player daemon that controls two instances
+of VLC and is an ncurses application which will take over the display in that terminal.
+
+You can quit with 'q', pause with ' ', stop with 's', play (resume) with 'p' and skip with 'n'.
 
 ### Adding tracks to the queue
 
