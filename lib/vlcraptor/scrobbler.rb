@@ -16,30 +16,34 @@ module Vlcraptor
 
     def self.ask(prompt)
       puts prompt
-      gets.chomp
+      gets.chomp.strip
+    end
+
+    def self.blank(attribute)
+      (attribute || "").length.zero?
     end
 
     def self.load
-      conf = Vlcraptor::Settings.new("~/lastfm.yaml")
+      conf = Vlcraptor::Settings.new("~/.lastfm.yml")
 
-      unless conf["api_key"] && conf["secret"]
-        puts "You will need an api key and secret for last fm integration"
-        conf["api_key"] = ask("What is the api key? ")
-        conf["secret"] = ask("What is the secret ")
-      end
+      conf[:api_key] = ask("What is the api key? ") if blank(conf[:api_key])
+      conf[:secret] = ask("What is the secret? ") if blank(conf[:secret])
+      conf[:user] = ask("What is your lastfm username? ") if blank(conf[:user])
 
-      conf["user"] = ask("What is your lastfm username? ") unless conf["user"]
+      return nil if blank(conf[:api_key]) || blank(conf[:secret]) || blank(conf[:user])
 
-      scrobbler = Vlcraptor::Scrobbler.new(conf["api_key"], conf["secret"], conf["user"], conf["session"])
+      scrobbler = Vlcraptor::Scrobbler.new(conf[:api_key], conf[:secret], conf[:user], conf[:session])
 
-      unless conf["session"]
-        conf["session"] = scrobbler.fetch_session_key do |url|
+      unless conf[:session]
+        conf[:session] = scrobbler.fetch_session_key do |url|
           puts "A browser will now launch to allow to authorise this application to access your lastfm account"
           `open '#{url}'`
           puts "Press enter when you have authorised the application"
           gets
         end
       end
+
+      return nil if blank(conf[:session])
 
       scrobbler
     end

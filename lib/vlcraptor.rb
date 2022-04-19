@@ -7,6 +7,7 @@ require_relative "vlcraptor/player_controller"
 require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
 require_relative "vlcraptor/notifiers"
+require_relative "vlcraptor/scrobbler"
 
 module Vlcraptor
   def self.autoplay(value)
@@ -119,7 +120,10 @@ module Vlcraptor
   end
 
   def self.scrobble(value)
-    Vlcraptor::Preferences.new[:scrobble] = value == "on"
+    preferences = Vlcraptor::Preferences.new
+    preferences[:scrobble] = value == "on"
+    scrobbler = Vlcraptor::Scrobbler.load if preferences.scrobble?
+    preferences[:scrobble] = false unless scrobbler
   end
 
   def self.skip
