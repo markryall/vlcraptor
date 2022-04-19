@@ -53,7 +53,13 @@ module Vlcraptor
     Curses.curs_set(0)
     Curses.noecho
 
-    Curses.init_pair(1, 2, 0) # Curses::COLOR_GREEN on Curses::COLOR_BLACK
+    Curses.init_pair(0, 0, 0) # white
+    Curses.init_pair(2, 2, 0) # green
+    Curses.init_pair(5, 5, 0) # magenta
+    Curses.init_pair(6, 6, 0) # cyan
+    Curses.init_pair(8, 8, 0) # grey
+    Curses.init_pair(9, 9, 0) # orange
+    Curses.init_pair(11, 11, 0) # yellow
 
     player_controller = Vlcraptor::PlayerController.new
     window = Curses::Window.new(0, 0, 1, 2)
@@ -62,18 +68,15 @@ module Vlcraptor
     loop do
       window.setpos(0, 0)
 
-      lines = player_controller.lines
-
-      lines.each do |line|
-        window.attron(Curses.color_pair(1)) { window << line }
+      player_controller.next.each do |pair|
+        window.attron(Curses.color_pair(pair.first)) { window << pair.last }
         Curses.clrtoeol
         window << "\n"
       end
       (window.maxy - window.cury).times { window.deleteln }
       window.refresh
 
-      str = window.getch.to_s
-      case str
+      case window.getch.to_s
       when " "
         pause
       when "n"

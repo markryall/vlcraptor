@@ -16,7 +16,7 @@ module Vlcraptor
       @suspended = false
     end
 
-    def lines
+    def next
       return on_pause if @preferences.pause?
       return on_stop if @preferences.stop?
       return on_play if @preferences.play?
@@ -37,7 +37,7 @@ module Vlcraptor
       @player.fadeout
       @player.pause
       @suspended = true
-      @message = "Paused"
+      @status = "Now Paused"
       @notifiers.track_suspended
       when_suspended
     end
@@ -46,7 +46,7 @@ module Vlcraptor
       @player.fadeout
       @player.stop
       @suspended = true
-      @message = "Stopped"
+      @status = "Now Stopped"
       @notifiers.track_suspended
       when_suspended
     end
@@ -54,13 +54,13 @@ module Vlcraptor
     def on_play
       @player.fadein
       @suspended = false
-      @message = ""
+      @status = ""
       @notifiers.track_resumed(@track, @player.time)
       when_playing_track(@player.remaining)
     end
 
     def when_suspended
-      [display_time(Time.now), @message]
+      build
     end
 
     def when_playing
@@ -106,23 +106,27 @@ module Vlcraptor
     end
 
     def when_playing_track(remaining)
-      [
-        display_time(Time.now),
-        "Playing",
-        @track[:title],
-        @track[:artist],
-        @track[:album],
-        "Duration #{duration(@track[:length])}",
-        "Remaining #{duration(remaining)}",
-      ]
+      @status = "Now Playing"
+      remaining_color = remaining < 30 ? 9 : 5
+      build(
+        [2, @track[:title]],
+        [0, "by"],
+        [11, @track[:artist]],
+        [0, "from"],
+        [6, @track[:album]],
+        [0, "(#{duration(@track[:length])})"],
+        [remaining_color, "#{duration(remaining)} remaining"],
+      )
     end
 
     def when_empty
-      [display_time(Time.now), "Queue is empty"]
+      @status = "Now Waiting"
+      build
     end
 
     def when_manual
-      [display_time(Time.now), "Autoplay is off"]
+      @status = "Now Waiting"
+      build
     end
 
     def display_time(time)
@@ -135,6 +139,18 @@ module Vlcraptor
       else
         "#{seconds}s"
       end
+    end
+
+    def build(*extra)
+      autoplay = @preferences[:autoplay] ? "+" : "-"
+      crossfade = @preferences[:crossfade] ? "+" : "-"
+      scrobble = @preferences[:scrobble] ? "+" : "-"
+      [
+        [0, display_time(Time.now)],
+        [0, @status],
+        [0, "#{Vlcraptor::Queue.length} items in queue"],
+        [8, "#{autoplay}autoplay #{crossfade}crossfade #{scrobble}scrobble"],
+      ] + extra
     end
   end
 end

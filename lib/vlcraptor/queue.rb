@@ -18,6 +18,10 @@ module Vlcraptor
       File.exist?(result[:path]) ? result : self.next
     end
 
+    def self.length
+      Dir["/tmp/queue/*.yml"].length
+    end
+
     def self.each
       Dir["/tmp/queue/*.yml"].sort.each do |path|
         yield YAML.load_file path
