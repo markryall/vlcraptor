@@ -74,6 +74,14 @@ module Vlcraptor
 
       str = window.getch.to_s
       case str
+      when " "
+        pause
+      when "n"
+        skip
+      when "p"
+        play
+      when "s"
+        stop
       when "q"
         break
       end
