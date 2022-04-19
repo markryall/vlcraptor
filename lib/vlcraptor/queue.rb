@@ -32,6 +32,21 @@ module Vlcraptor
       end
     end
 
+    def self.swap(a, b)
+      all = Dir["/tmp/queue/*.yml"].sort
+      path_a = all[a.to_i]
+      path_b = all[b.to_i]
+
+      if path_a && path_b
+        `mv #{path_a} #{path_a}.tmp`
+        `mv #{path_b} #{path_a}`
+        `mv #{path_a}.tmp #{path_b}`
+        yield
+      else
+        puts "Could not find tracks at positions #{a} and #{b}"
+      end
+    end
+
     def self.add(path)
       unless %w[.mp3 .m4a].include?(File.extname(path))
         puts "skipping #{path}"

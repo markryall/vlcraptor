@@ -33,6 +33,8 @@ when "skip"
   Vlcraptor.skip
 when "stop"
   Vlcraptor.stop
+when "swap"
+  Vlcraptor.swap(ARGV)
 else
   puts "Unknown command \"#{command}\":"
   puts "  autoplay on/off: continue playing tracks or stop at the end of current track"
@@ -47,4 +49,5 @@ else
   puts "  scrobble on/off: send track information to last.fm (requires an api key)"
   puts "  skip: skip the current track"
   puts "  stop: stop the player (resume with play)"
+  puts "  swap a b: swap tracks in queue at index positions a and b"
 end

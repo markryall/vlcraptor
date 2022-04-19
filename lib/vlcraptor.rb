@@ -28,8 +28,9 @@ module Vlcraptor
   def self.list
     started = Vlcraptor::Preferences.new[:started]
     offset = 0
+    index = 0
     Vlcraptor::Queue.each do |track|
-      array = []
+      array = [Rainbow(index.to_s).magenta]
       array << Time.at(started + offset).strftime("%I:%M:%S") if started
       array += [Rainbow(track[:title]).green, "by", Rainbow(track[:artist]).yellow]
       array += ["from", Rainbow(track[:album]).cyan] if (track[:album] || "").length.positive?
@@ -40,6 +41,7 @@ module Vlcraptor
       end
       puts array.join(" ")
       offset += track[:length]
+      index += 1
     end
   end
 
@@ -122,5 +124,10 @@ module Vlcraptor
 
   def self.stop
     Vlcraptor::Preferences.new[:stop] = true
+  end
+
+  def self.swap(args)
+    a, b = *args
+    Vlcraptor::Queue.swap(a, b) { list }
   end
 end
