@@ -133,40 +133,31 @@ module Vlcraptor
     Curses.curs_set(0)
     Curses.noecho
 
-    Curses.init_pair(1, 1, 0) # Curses::COLOR_RED on Curses::COLOR_BLACK
-    Curses.init_pair(2, 2, 0) # Curses::COLOR_GREEN on Curses::COLOR_BLACK
+    Curses.init_pair(1, 2, 0) # Curses::COLOR_GREEN on Curses::COLOR_BLACK
 
     player_controller = Vlcraptor::PlayerController.new
-    win = Curses::Window.new(0, 0, 1, 2)
-    win.nodelay = true
-    index = 0
+    window = Curses::Window.new(0, 0, 1, 2)
+    window.nodelay = true
 
     loop do
-      win.setpos(0, 0) # we set the cursor on the starting position
+      window.setpos(0, 0)
 
       lines = player_controller.lines
 
-      lines.each.with_index(0) do |str, i| # we iterate through our data
-        if i == index # if the element is currently chosen...
-          win.attron(Curses.color_pair(1)) { win << str }
-        else
-          win.attron(Curses.color_pair(2)) { win << str }
-        end
-        Curses.clrtoeol # clear to end of line
-        win << "\n" # and move to next
+      lines.each do |line|
+        window.attron(Curses.color_pair(1)) { window << line }
+        Curses.clrtoeol
+        window << "\n"
       end
-      (win.maxy - win.cury).times { win.deleteln }
-      win.refresh
+      (window.maxy - window.cury).times { window.deleteln }
+      window.refresh
 
-      str = win.getch.to_s
+      str = window.getch.to_s
       case str
-      when "i"
-        index = index >= lines.length - 1 ? lines.length - 1 : index + 1
-      when "o"
-        index = index <= 0 ? 0 : index - 1
       when "q"
-        exit 0
+        break
       end
+
       sleep 0.1
     end
   ensure
