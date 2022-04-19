@@ -13,6 +13,8 @@ when "autoplay"
   Vlcraptor.autoplay(ARGV.shift)
 when "crossfade"
   Vlcraptor.crossfade(ARGV.shift)
+when "history"
+  Vlcraptor.history
 when "list"
   Vlcraptor.list
 when "pause"
@@ -21,6 +23,8 @@ when "play"
   Vlcraptor.play
 when "player"
   Vlcraptor.player
+when "player_new"
+  Vlcraptor.player_new
 when "queue"
   Vlcraptor.queue(ARGV)
 when "scrobble"
@@ -33,6 +37,7 @@ else
   puts "Unknown command \"#{command}\":"
   puts "  autoplay on/off: continue playing tracks or stop at the end of current track"
   puts "  crossfade on/off: 5 second crossfade when changing tracks"
+  puts "  history: display play history"
   puts "  list: list current queue"
   puts "  pause: pause current track (resume with play)"
   puts "  play: resume after pause/stop"

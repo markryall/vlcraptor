@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     vlcraptor (0.2.0)
+      curses
       rainbow
       vlc-client
 
@@ -11,6 +12,7 @@ GEM
     ast (2.4.2)
     backport (1.2.0)
     benchmark (0.2.0)
+    curses (1.4.4)
     diff-lcs (1.5.0)
     e2mmap (0.1.0)
     jaro_winkler (1.5.4)

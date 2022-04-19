@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "curses"
 require "rainbow"
 require_relative "vlcraptor/player"
+require_relative "vlcraptor/player_controller"
 require_relative "vlcraptor/preferences"
 require_relative "vlcraptor/queue"
 require_relative "vlcraptor/notifiers"
@@ -13,6 +15,10 @@ module Vlcraptor
 
   def self.crossfade(value)
     Vlcraptor::Preferences.new[:crossfade] = value == "on"
+  end
+
+  def self.history
+    system("cat #{File.expand_path("~")}/.player_history")
   end
 
   def self.list
@@ -45,7 +51,7 @@ module Vlcraptor
     player = Vlcraptor::Player.new
     queue = Vlcraptor::Queue.new
     preferences = Vlcraptor::Preferences.new
-    notifiers = Vlcraptor::Notifiers.new(preferences)
+    notifiers = Vlcraptor::Notifiers.new
     track = nil
     suspended = false
 
@@ -119,6 +125,53 @@ module Vlcraptor
     notifiers.track_suspended
     player.cleanup
     puts "Exiting"
+  end
+
+  def self.player_new
+    Curses.init_screen
+    Curses.start_color
+    Curses.curs_set(0)
+    Curses.noecho
+
+    Curses.init_pair(1, 1, 0) # Curses::COLOR_RED on Curses::COLOR_BLACK
+    Curses.init_pair(2, 2, 0) # Curses::COLOR_GREEN on Curses::COLOR_BLACK
+
+    player_controller = Vlcraptor::PlayerController.new
+    win = Curses::Window.new(0, 0, 1, 2)
+    win.nodelay = true
+    index = 0
+
+    loop do
+      win.setpos(0, 0) # we set the cursor on the starting position
+
+      lines = player_controller.lines
+
+      lines.each.with_index(0) do |str, i| # we iterate through our data
+        if i == index # if the element is currently chosen...
+          win.attron(Curses.color_pair(1)) { win << str }
+        else
+          win.attron(Curses.color_pair(2)) { win << str }
+        end
+        Curses.clrtoeol # clear to end of line
+        win << "\n" # and move to next
+      end
+      (win.maxy - win.cury).times { win.deleteln }
+      win.refresh
+
+      str = win.getch.to_s
+      case str
+      when "i"
+        index = index >= lines.length - 1 ? lines.length - 1 : index + 1
+      when "o"
+        index = index <= 0 ? 0 : index - 1
+      when "q"
+        exit 0
+      end
+      sleep 0.1
+    end
+  ensure
+    player_controller.cleanup
+    Curses.close_screen
   end
 
   def self.queue(paths)

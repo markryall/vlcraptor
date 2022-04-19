@@ -2,13 +2,15 @@
 
 require "rainbow"
 require_relative "console"
+require_relative "preferences"
 require_relative "scrobbler"
 
 module Vlcraptor
   class Notifiers
-    def initialize(preferences)
-      @preferences = preferences
-      @console = Vlcraptor::Console.new
+    def initialize(use_console: true)
+      @preferences = Vlcraptor::Preferences.new
+      @history = "#{File.expand_path("~")}/.player_history"
+      @console = Vlcraptor::Console.new if use_console
     end
 
     def track_suspended
@@ -23,6 +25,7 @@ module Vlcraptor
     end
 
     def track_progress(track, remaining)
+      return unless @console
       return unless track
 
       rem = if remaining > 60
@@ -42,30 +45,32 @@ module Vlcraptor
     def track_started(track)
       return unless track
 
-      @preferences[:started] = Time.now.to_i
       track[:start_time] = Time.now
+      @preferences[:started] = track[:start_time].to_i
       scrobbler&.now_playing(track[:artist], track[:title])
       terminal_notify(
         message: "#{track[:title]} by #{track[:artist]}",
         title: "Now Playing",
       )
+
       len = if track[:length] > 60
               "(#{track[:length] / 60}m and #{track[:length] % 60}s)"
             else
               "(#{track[:length]}s)"
             end
 
-      @console.replace(
-        [
-          display_time(Time.now),
-          Rainbow(track[:title]).green,
-          "by",
-          Rainbow(track[:artist]).yellow,
-          "from",
-          Rainbow(track[:album]).cyan,
-          len,
-        ].join(" ")
-      )
+      message = [
+        display_time(track[:start_time]),
+        Rainbow(track[:title]).green,
+        "by",
+        Rainbow(track[:artist]).yellow,
+        "from",
+        Rainbow(track[:album]).cyan,
+        len,
+      ].join(" ")
+
+      File.open(@history, "a") { |file| file.puts message }
+      @console.replace(message) if @console
     end
 
     def track_finished(track)
