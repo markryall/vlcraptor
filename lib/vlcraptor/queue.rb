@@ -32,6 +32,16 @@ module Vlcraptor
       end
     end
 
+    def self.remove(index)
+      path = Dir["/tmp/queue/*.yml"].sort[index.to_i]
+      if path
+        `rm #{path}`
+        yield
+      else
+        puts "Could not find track at position #{index}"
+      end
+    end
+
     def self.swap(a, b)
       all = Dir["/tmp/queue/*.yml"].sort
       path_a = all[a.to_i]

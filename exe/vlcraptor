@@ -25,6 +25,8 @@ when "play"
   Vlcraptor.play
 when "player"
   Vlcraptor.player
+when "remove"
+  Vlcraptor.remove(ARGV.shift)
 when "queue"
   Vlcraptor.queue(ARGV)
 when "scrobble"
@@ -46,6 +48,7 @@ else
   puts "  play: resume after pause/stop"
   puts "  player: start the player"
   puts "  queue paths: queue folders or files containing music tracks"
+  puts "  remove a: remove track from queue at index position a"
   puts "  scrobble on/off: send track information to last.fm (requires an api key)"
   puts "  skip: skip the current track"
   puts "  stop: stop the player (resume with play)"

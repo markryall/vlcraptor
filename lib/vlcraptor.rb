@@ -102,6 +102,10 @@ module Vlcraptor
     Curses.close_screen
   end
 
+  def self.remove(index)
+    Vlcraptor::Queue.remove(index) { list }
+  end
+
   def self.queue(paths)
     paths.each do |path|
       if File.file?(path)
