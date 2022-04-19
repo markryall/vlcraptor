@@ -59,9 +59,7 @@ module Vlcraptor
     end
 
     def on_play
-      unless @player.playing?
-        @player.fadein
-      end
+      @player.fadein if @suspended
       @suspended = false
       @notifiers.track_resumed(@track, @player.time)
       when_playing_track(@player.remaining)
