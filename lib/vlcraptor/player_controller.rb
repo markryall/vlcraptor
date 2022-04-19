@@ -11,7 +11,7 @@ module Vlcraptor
       @player = Vlcraptor::Player.new
       @preferences = Vlcraptor::Preferences.new
       @queue = Vlcraptor::Queue.new
-      @notifiers = Vlcraptor::Notifiers.new(use_console: false)
+      @notifiers = Vlcraptor::Notifiers.new
       @track = nil
       @suspended = false
     end
@@ -67,7 +67,6 @@ module Vlcraptor
       return on_skip if @preferences.skip?
       return on_crossfade if @preferences.crossfade? && @player.remaining < 5
 
-      @notifiers.track_progress(@track, @player.remaining)
       when_playing_track(@player.remaining)
     end
 

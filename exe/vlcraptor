@@ -23,8 +23,6 @@ when "play"
   Vlcraptor.play
 when "player"
   Vlcraptor.player
-when "player_new"
-  Vlcraptor.player_new
 when "queue"
   Vlcraptor.queue(ARGV)
 when "scrobble"
