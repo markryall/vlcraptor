@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    vlcraptor (0.3.0)
+    vlcraptor (0.4.0)
       curses
       rainbow
       vlc-client

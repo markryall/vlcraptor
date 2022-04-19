@@ -37,10 +37,18 @@ You can quit with 'q', pause with ' ', stop with 's', play (resume) with 'p' and
 `vlcraptor queue folder_containing_audio_files audio_file.mp3` will place any number of audio files in the
 queue and the player should immediately start playing the first track.
 
-### Listing queue contents
+### Viewing queue contents
 
 `vlcraptor list` will list currently queued tracks with an estimated start time if the player is currently
 running and playing a track.
+
+### Managing queue
+
+`vlcraptor clear` will clear all queued tracks.
+
+`vlcraptor remove 2` will remove queued track at index position 2.
+
+`vlcraptor swap 2 4` will swap the tracks at index positions 2 and 4.
 
 ### Media controls
 
