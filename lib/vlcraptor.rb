@@ -78,7 +78,6 @@ module Vlcraptor
       player_controller.next.each do |pair|
         window.attron(Curses.color_pair(pair.first)) { window << pair.last }
         Curses.clrtoeol
-        window << "\n"
       end
       (window.maxy - window.cury).times { window.deleteln }
       window.refresh

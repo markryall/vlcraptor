@@ -113,12 +113,17 @@ module Vlcraptor
       remaining_color = remaining < 30 ? 9 : 5
       build(
         [2, @track[:title]],
-        [0, "by"],
+        [0, "\n"],
+        [0, "by "],
         [11, @track[:artist]],
-        [0, "from"],
+        [0, "\n"],
+        [0, "from "],
         [6, @track[:album]],
-        [0, "(#{duration(@track[:length])})"],
-        [remaining_color, "#{duration(remaining)} remaining"],
+        [0, "\n"],
+        [remaining_color, duration(remaining)],
+        [0, " of "],
+        [0, duration(@track[:length])],
+        [0, " remaining\n"],
       )
     end
 
@@ -150,9 +155,13 @@ module Vlcraptor
       scrobble = @preferences[:scrobble] ? "+" : "-"
       [
         [0, display_time(Time.now)],
+        [0, "\n"],
         [0, @status],
+        [0, "\n"],
         [0, "#{Vlcraptor::Queue.length} items in queue"],
+        [0, "\n"],
         [8, "#{autoplay}autoplay #{crossfade}crossfade #{scrobble}scrobble"],
+        [0, "\n"],
       ] + extra
     end
   end
