@@ -23,7 +23,9 @@ module Vlcraptor
   end
 
   def self.history
-    system("cat #{File.expand_path("~")}/.player_history")
+    history_path = "#{File.expand_path("~")}/.player_history"
+    `touch #{history_path}`
+    system("cat #{history_path}")
   end
 
   def self.list
