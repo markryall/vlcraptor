@@ -152,7 +152,7 @@ module Vlcraptor
         [0, "\n"],
         [0, @status],
         [0, "\n"],
-        [0, "#{Vlcraptor::Queue.length} items in queue"],
+        [0, "#{Vlcraptor::Queue.length} queued tracks"],
         [0, "\n"],
         [8, "#{autoplay}autoplay #{crossfade}crossfade #{scrobble}scrobble"],
         [0, "\n"],
