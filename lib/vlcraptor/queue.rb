@@ -65,15 +65,20 @@ module Vlcraptor
 
       puts "adding #{path}"
       tags = Vlcraptor::Ffmpeg.new(path)
-      meta = {
+      enqueue(
         title: tags.title,
         artist: tags.artist,
         album: tags.album,
         length: tags.time,
-        path: File.expand_path(path),
-      }
+        path: File.expand_path(path)
+      )
+    end
+
+    def self.enqueue(track)
       `mkdir -p /tmp/queue`
-      File.open("/tmp/queue/#{(Time.now.to_f * 1000).to_i}.yml", "w") { |f| f.puts meta.to_yaml }
+      File.open("/tmp/queue/#{(Time.now.to_f * 1000).to_i}.yml", "w") do |file|
+        file.puts track.to_yaml
+      end
     end
   end
 end
