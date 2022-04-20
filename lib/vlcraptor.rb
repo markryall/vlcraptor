@@ -95,7 +95,7 @@ module Vlcraptor
         break
       end
 
-      sleep 0.1
+      sleep 0.2
     end
   ensure
     player_controller.cleanup

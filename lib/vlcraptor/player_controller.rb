@@ -17,11 +17,11 @@ module Vlcraptor
     end
 
     def next
-      return on_pause if @preferences.pause?
-      return on_stop if @preferences.stop?
-      return on_play if @preferences.play?
-      return on_suspended if @suspended
-      return when_playing if @player.playing?
+      return on_play if @preferences.play? && @suspended
+      return on_pause if @preferences.pause? && !@suspended
+      return on_stop if @preferences.stop? && !@suspended
+      return build if @suspended
+      return when_playing if @track && @player.playing?
       return when_auto if @preferences.continue?
 
       when_manual
@@ -36,30 +36,24 @@ module Vlcraptor
     private
 
     def on_pause
-      when_suspended("Now Paused", :pause)
+      suspend("Now Paused", :pause)
     end
 
     def on_stop
-      when_suspended("Now Stopped", :stop)
+      suspend("Now Stopped", :stop)
     end
 
-    def when_suspended(status, method)
-      if @player.playing?
-        @player.fadeout
-        @player.send(method)
-      end
+    def suspend(status, method)
+      @player.fadeout
+      @player.send(method)
       @status = status
       @suspended = true
       @notifiers.track_suspended
-      on_suspended
-    end
-
-    def on_suspended
       build
     end
 
     def on_play
-      @player.fadein if @suspended
+      @player.fadein
       @suspended = false
       @notifiers.track_resumed(@track, @player.time)
       when_playing_track(@player.remaining)
